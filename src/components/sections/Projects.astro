@@ -1,0 +1,308 @@
+---
+const securityPerimeterItems = [
+  'Zero Trust Cloudflare Tunnels',
+  'Secure Outbound Tunnel',
+  'Hardened SSH (Key-based Authentication)',
+];
+
+const networkTopologyItems = [
+  'Internal docker-cloudflared Bridge',
+  'Dedicated docker-proxy Application Mesh',
+  'Nginx Traffic Controller (Internal LB)',
+];
+
+const stackGroups = [
+  {
+    label: 'ORCHESTRATE',
+    items: [
+      ['Docker Engine', 'Container runtime for isolated application execution.'],
+      ['Docker Compose', 'Multi-container orchestration and infrastructure-as-code deployment.'],
+      ['Portainer', 'Centralized GUI for container lifecycle and status management.'],
+    ],
+  },
+  {
+    label: 'NETWORK',
+    items: [
+      ['Nginx Proxy', 'Layer 7 traffic routing, SSL termination, and domain multiplexing.'],
+      ['Cloudflared', 'Zero-trust outbound tunnel for secure ingress without open ports.'],
+      ['Tailscale', 'Mesh VPN for encrypted, private administrative access.'],
+    ],
+  },
+  {
+    label: 'OBSERVE',
+    items: [
+      ['Prometheus', 'Time-series metrics collection via service discovery.'],
+      ['Grafana', 'Visualizing real-time telemetry and infrastructure health.'],
+      ['Uptime Kuma', 'Automated heartbeat monitoring and incident alerting.'],
+    ],
+  },
+  {
+    label: 'HARDWARE & OS',
+    items: [
+      ['Ubuntu Server', 'Bare-metal OS hosting the production container environment.'],
+      ['Arch Linux', 'Workstation environment for IaC development and GitOps.'],
+      ['Storage Architecture', 'Tiered data management for app logic and media workloads.'],
+    ],
+  },
+  {
+    label: 'AUTOMATE',
+    items: [['GitHub Actions', 'Automated CI/CD pipelines for infrastructure deployment.']],
+  },
+];
+---
+
+<section id="projects" class="projects-section">
+  <div class="projects-shell">
+    <header class="projects-header">
+      <div class="projects-heading-group">
+        <span class="projects-kicker"></span>
+        <h2 class="projects-title">Projects</h2>
+      </div>
+
+      <div class="projects-summary">
+        <p>
+          Detailed technical breakdown of architected solutions and operational deployments.
+        </p>
+      </div>
+    </header>
+
+    <section id="private-cloud" class="project-feature">
+      <div class="project-feature-heading">
+        <h3 class="project-feature-title">Private Cloud Architecture</h3>
+        <div class="project-feature-rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="project-feature-layout">
+        <div class="project-feature-details">
+          <p class="project-feature-description">
+            Engineered a production-ready lab environment focused on
+            <strong> High Availability </strong> and <strong> Security Hardening </strong>. This
+            architecture serves as a scalable template for microservices-based business deployments.
+          </p>
+
+          <div class="project-pillars">
+            <article class="project-pillar glass-effect">
+              <h4 class="project-pillar-title">Security Perimeter</h4>
+              <ul class="project-pillar-list">
+                {
+                  securityPerimeterItems.map((item) => (
+                    <li class="project-pillar-item">
+                      <span class="project-pillar-arrow" aria-hidden="true">
+                        →
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </article>
+
+            <article class="project-pillar glass-effect">
+              <h4 class="project-pillar-title">Network Topology</h4>
+              <ul class="project-pillar-list">
+                {
+                  networkTopologyItems.map((item) => (
+                    <li class="project-pillar-item">
+                      <span class="project-pillar-arrow" aria-hidden="true">
+                        →
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <div class="project-network-panel glass-effect">
+          <div class="project-network-label">
+            <div class="project-network-indicator" aria-hidden="true"></div>
+            <span>Live Infrastructure Visualization</span>
+          </div>
+
+          <svg class="project-network-visual" viewBox="0 0 600 550" preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(300, 30)">
+              <circle fill="transparent" r="12" stroke="#475569" stroke-dasharray="2" stroke-width="1"></circle>
+              <text
+                x="0"
+                y="22"
+                fill="#475569"
+                font-family="JetBrains Mono"
+                font-size="8"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                External User
+              </text>
+              <path d="M-4,-4 L4,4 M-4,4 L4,-4" stroke="#475569" stroke-width="1"></path>
+            </g>
+
+            <path class="project-network-line project-network-flow" d="M300,45 L300,80" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+
+            <g transform="translate(300, 80)">
+              <rect fill="#0a0f1d" height="26" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-13"></rect>
+              <text
+                fill="#22d3ee"
+                font-family="JetBrains Mono"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                Cloudflare Edge
+              </text>
+            </g>
+
+            <path
+              class="project-network-line project-network-flow"
+              d="M300,93 L300,165"
+              fill="none"
+              stroke="#22d3ee"
+              stroke-dasharray="4"
+              stroke-width="1.5"
+            ></path>
+            <text x="350" y="125" fill="#22d3ee" font-family="JetBrains Mono" font-size="7" opacity="0.6" text-anchor="middle">
+              mTLS Tunnel
+            </text>
+
+            <rect
+              x="30"
+              y="165"
+              width="540"
+              height="360"
+              rx="12"
+              fill="rgba(34, 211, 238, 0.02)"
+              stroke="rgba(34, 211, 238, 0.3)"
+              stroke-width="1"
+            ></rect>
+            <text x="45" y="185" fill="rgba(34, 211, 238, 0.4)" font-family="JetBrains Mono" font-size="9" font-weight="bold">
+              Physical Server Node: LVM-1
+            </text>
+
+            <g transform="translate(300, 220)">
+              <circle fill="#0a0f1d" r="22" stroke="#22d3ee" stroke-width="1"></circle>
+              <text
+                y="32"
+                fill="#94a3b8"
+                font-family="JetBrains Mono"
+                font-size="8"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                cloudflared
+              </text>
+              <path d="M-6,-6 L6,6 M-6,6 L6,-6" stroke="#22d3ee" stroke-width="1"></path>
+            </g>
+
+            <path class="project-network-line project-network-flow" d="M300,242 L300,280" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <text x="240" y="265" fill="#475569" font-family="JetBrains Mono" font-size="7" text-anchor="middle">
+              docker-cloudflared bridge
+            </text>
+
+            <g transform="translate(300, 300)">
+              <rect fill="#0a0f1d" height="30" rx="4" stroke="#22d3ee" stroke-width="1" width="110" x="-55" y="-15"></rect>
+              <text
+                fill="#22d3ee"
+                font-family="JetBrains Mono"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                Nginx-LB
+              </text>
+            </g>
+
+            <path class="project-network-line project-network-flow" d="M300,315 L120,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path class="project-network-line project-network-flow" d="M300,315 L240,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path class="project-network-line project-network-flow" d="M300,315 L360,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <path class="project-network-line project-network-flow" d="M300,315 L480,380" fill="none" stroke="#22d3ee" stroke-width="1"></path>
+            <text x="300" y="350" fill="#475569" font-family="JetBrains Mono" font-size="7" text-anchor="middle">
+              docker-proxy network
+            </text>
+
+            <g transform="translate(120, 400)">
+              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+              <text
+                fill="#94a3b8"
+                font-family="JetBrains Mono"
+                font-size="8"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                Vaultwarden
+              </text>
+            </g>
+
+            <g transform="translate(240, 400)">
+              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+              <text
+                fill="#94a3b8"
+                font-family="JetBrains Mono"
+                font-size="8"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                Nextcloud
+              </text>
+            </g>
+
+            <g transform="translate(360, 400)">
+              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+              <text
+                fill="#94a3b8"
+                font-family="JetBrains Mono"
+                font-size="8"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                Portainer
+              </text>
+            </g>
+
+            <g transform="translate(480, 400)">
+              <rect fill="#0a0f1d" height="25" rx="2" stroke="#1e293b" stroke-width="1" width="85" x="-42" y="-12"></rect>
+              <text
+                fill="#94a3b8"
+                font-family="JetBrains Mono"
+                font-size="8"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                Grafana
+              </text>
+            </g>
+
+            <circle class="project-network-pulse" cx="300" cy="55" r="2" fill="#22d3ee"></circle>
+            <circle class="project-network-pulse" cx="300" cy="130" r="2" fill="#22d3ee" style="animation-delay: 0.5s"></circle>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="tech-stack" class="project-stack">
+      <h4 class="project-stack-title">Project Dependencies &amp; Stack</h4>
+
+      <div class="project-stack-grid">
+        {
+          stackGroups.map((group) => (
+            <section class="project-stack-group">
+              <h5 class="project-stack-group-title">
+                <span class="project-stack-group-rule" aria-hidden="true"></span>
+                {group.label}
+              </h5>
+
+              <div class="project-tech-list">
+                {group.items.map(([name, description]) => (
+                  <article class="project-tech-item">
+                    <span class="project-tech-chip">{name}</span>
+                    <div class="project-tech-tooltip glass-effect">{description}</div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</section>

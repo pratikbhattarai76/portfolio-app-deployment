@@ -1,65 +1,55 @@
-# portfolio-app
+# 🚀 Pratik's DevOps Portfolio & Cloud Portal
 
-Simple portfolio site built with Astro and Tailwind CSS.
+A high-performance, Server-Side Rendered (SSR) portfolio built to act as the public ingress point for my self-hosted Hybrid Private Cloud. 
 
-## Requirements
+This repository contains the application source code, API logic for the SMTP contact module, and the automated containerization blueprints (`Dockerfile`).
 
-- Node.js `22.12.0` or newer
-- npm
-- Docker (optional, for container build/run)
+🔗 **Live Deployment:** [pratik-labs.xyz](https://web.pratik-labs.xyz)
+⚙️ **Infrastructure Repo:** [View the Private Cloud Architecture here](https://github.com/pratikbhattarai76/private-cloud-infrastructure)
 
-## Run locally
+---
 
-1. Install dependencies:
+## 🏗️ DevOps & Architectural Highlights
+
+While this functions as a portfolio, it was engineered as a **Proof of Concept** for cloud-native deployment practices:
+
+*   **Multi-Stage Docker Build:** Utilizes a 3-stage `Dockerfile` to drastically reduce image size and attack surface. It compiles the TypeScript/Astro assets using `node:22-bookworm-slim` and ships only the compiled production artifacts in the final runner stage.
+*   **Runtime Secret Injection:** Strict separation of build-time and run-time environments. SMTP credentials and API keys are not baked into the image; they are passed securely via `.env` files and `docker-compose` at runtime.
+*   **Node.js SSR Adapter:** Configured to run as a dynamic Node server rather than a static site, enabling real-time REST API endpoints (like the contact form webhook) while maintaining edge-level caching.
+
+---
+
+## 🛠️ Technology Stack
+
+**Application Layer:**
+*   **Framework:** Astro
+*   **Language:** Strict TypeScript
+*   **Styling:** Tailwind CSS + Glassmorphism UI
+*   **API:** Built-in Astro API Routes (Node.js)
+*   **Email Delivery:** Nodemailer (SMTP Integration)
+
+**Deployment Layer:**
+*   **Containerization:** Docker (`pratikbhattarai76/portfolio-app:latest`)
+*   **Reverse Proxy:** Nginx Proxy Manager (External Repo)
+*   **Edge Security:** Cloudflare Zero Trust Tunnels (External Repo)
+
+---
+
+## ⚙️ Local Development Setup
+
+To run this project locally for development or testing:
 
 ```bash
-npm ci
-```
+# 1. Clone the repository
+git clone https://github.com/pratikbhattarai76/portfolio-app.git
+cd portfolio-app
 
-2. Create your environment file:
+# 2. Install dependencies
+npm install
 
-```bash
+# 3. Configure Environment Variables
 cp .env.example .env
-```
+# Edit the .env file with your SMTP credentials (see variables below)
 
-3. Update the values in `.env` as needed. The contact form uses SMTP settings from this file.
-
-4. Start the development server:
-
-```bash
+# 4. Start the development server
 npm run dev
-```
-
-The app will be available at `http://localhost:4321`.
-
-## Production build
-
-Build the app:
-
-```bash
-npm run build
-```
-
-Start the built server:
-
-```bash
-npm run start
-```
-
-## Build Docker image
-
-Build the image from the included `Dockerfile`:
-
-```bash
-docker build -t portfolio-app .
-```
-
-## Run with Docker
-
-Run the container and pass the same environment file:
-
-```bash
-docker run --rm -p 4321:4321 --env-file .env portfolio-app
-```
-
-The app will be available at `http://localhost:4321`.

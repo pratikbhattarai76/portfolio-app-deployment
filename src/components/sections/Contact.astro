@@ -5,15 +5,15 @@ import { siteConfig } from '../../config/site';
 <section id="contact" class="contact-section reveal-section">
   <div class="contact-shell">
     <div class="contact-copy">
-      <span class="contact-kicker">Establish Connection</span>
-      <h2 class="contact-title">Contact</h2>
-      <p class="contact-description">
+      <span class="contact-kicker reveal-item" style="--reveal-order: 0;">Establish Connection</span>
+      <h2 class="contact-title reveal-item" style="--reveal-order: 1;">Contact</h2>
+      <p class="contact-description reveal-item" style="--reveal-order: 2;">
         If you want to talk about infrastructure, observability, self-hosted platforms, or DevOps
         work, send a message here. The form delivers mail directly to my main inbox, and I also
         keep my personal email visible here for direct contact.
       </p>
 
-      <div class="contact-links">
+      <div class="contact-links reveal-item" style="--reveal-order: 3;">
         <a class="contact-link-card glass-effect" href={`mailto:${siteConfig.email}`}>
           <span class="contact-link-label">Email</span>
           <span class="contact-link-value">{siteConfig.email}</span>
@@ -31,7 +31,7 @@ import { siteConfig } from '../../config/site';
       </div>
     </div>
 
-    <div class="contact-panel glass-effect">
+    <div class="contact-panel glass-effect reveal-item" style="--reveal-order: 4;">
       <div class="contact-panel-badge">ENCRYPTED CHANNEL: MOMO STEAMER</div>
       <h3 class="contact-panel-title">Prepare Message</h3>
 

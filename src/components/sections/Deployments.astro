@@ -1,11 +1,11 @@
 <section id="deployments" class="deployments-section reveal-section">
-  <header class="deployments-header">
+  <header class="deployments-header reveal-item" style="--reveal-order: 0;">
     <h2 class="deployments-title">Microservice Command Center</h2>
     <p class="deployments-subtitle">Accessing Distributed Infrastructure</p>
   </header>
 
   <div class="deployments-grid">
-    <article class="deployment-card deployment-card-interactive">
+    <article class="deployment-card deployment-card-interactive reveal-item" style="--reveal-order: 1;">
       <header class="deployment-card-header">
         <span class="deployment-card-icon-box" aria-hidden="true">
           <span class="material-symbols-outlined deployment-card-symbol">cloud_done</span>
@@ -24,11 +24,11 @@
         class="deployment-card-button btn-glow-hover"
         type="button"
       >
-        Initialize Connection
+        Open Access Panel
       </button>
     </article>
 
-    <article class="deployment-card deployment-card-interactive">
+    <article class="deployment-card deployment-card-interactive reveal-item" style="--reveal-order: 2;">
       <header class="deployment-card-header">
         <span class="deployment-card-icon-box" aria-hidden="true">
           <span class="material-symbols-outlined deployment-card-symbol">lock</span>
@@ -46,7 +46,7 @@
       </button>
     </article>
 
-    <article class="deployment-card deployment-card-interactive">
+    <article class="deployment-card deployment-card-interactive reveal-item" style="--reveal-order: 3;">
       <header class="deployment-card-header">
         <span class="deployment-card-icon-box" aria-hidden="true">
           <span class="material-symbols-outlined deployment-card-symbol">monitoring</span>
@@ -79,7 +79,7 @@
     aria-hidden="true"
     aria-labelledby="deployment-connection-title"
   >
-    <div class="connection-modal-panel glass-effect">
+    <div class="connection-modal-panel glass-effect" tabindex="-1">
       <div class="connection-modal-topbar" aria-hidden="true"></div>
 
       <div class="connection-modal-header">
@@ -98,24 +98,66 @@
         </button>
       </div>
 
+      <p class="connection-modal-intro">
+        Guest credentials are available for quick demo access. On phones, copy the values instead
+        of selecting the text manually.
+      </p>
+
       <div class="connection-modal-details">
         <div class="connection-modal-field">
-          <span class="connection-modal-label">Server Address</span>
-          <div class="connection-modal-value">cloud.pratik-labs.xyz</div>
+          <div class="connection-modal-field-meta">
+            <span class="connection-modal-label">Server Address</span>
+            <button
+              class="connection-modal-copy"
+              type="button"
+              data-copy-value="cloud.pratik-labs.xyz"
+            >
+              Copy
+            </button>
+          </div>
+          <code class="connection-modal-value">cloud.pratik-labs.xyz</code>
         </div>
 
         <div class="connection-modal-field">
-          <span class="connection-modal-label">Access Identity</span>
-          <div class="connection-modal-value connection-modal-value-accent">User: Guest</div>
+          <div class="connection-modal-field-meta">
+            <span class="connection-modal-label">Access Identity</span>
+            <button class="connection-modal-copy" type="button" data-copy-value="Guest">
+              Copy
+            </button>
+          </div>
+          <code class="connection-modal-value connection-modal-value-accent">Guest</code>
         </div>
 
         <div class="connection-modal-field">
-          <span class="connection-modal-label">Decryption Key</span>
-          <div class="connection-modal-value connection-modal-value-accent">Password: Guest@123@12@1</div>
+          <div class="connection-modal-field-meta">
+            <span class="connection-modal-label">Decryption Key</span>
+            <button
+              class="connection-modal-copy"
+              type="button"
+              data-copy-value="Guest@123@12@1"
+            >
+              Copy
+            </button>
+          </div>
+          <code class="connection-modal-value connection-modal-value-accent">
+            Guest@123@12@1
+          </code>
         </div>
       </div>
 
+      <p class="connection-modal-note">
+        Use the guest account for preview access only. Password rotation may disable this login at
+        any time.
+      </p>
+
       <div class="connection-modal-actions">
+        <button
+          class="connection-modal-button connection-modal-button-secondary"
+          type="button"
+          data-copy-value={`Server: cloud.pratik-labs.xyz\nUser: Guest\nPassword: Guest@123@12@1`}
+        >
+          Copy All
+        </button>
         <a
           class="connection-modal-button"
           href="https://cloud.pratik-labs.xyz"
@@ -133,6 +175,51 @@
   const modal = document.getElementById('deployment-connection-modal');
   const openButton = document.getElementById('deployment-open-connection');
   const closeButton = document.getElementById('deployment-close-connection');
+  const modalPanel = modal?.querySelector('.connection-modal-panel');
+  const copyButtons = modal?.querySelectorAll('[data-copy-value]');
+  let activeTrigger = null;
+
+  const resetCopyButton = (button) => {
+    window.clearTimeout(Number(button.dataset.copyTimer));
+    button.textContent = button.dataset.defaultLabel ?? 'Copy';
+    button.dataset.copyTimer = '';
+  };
+
+  const fallbackCopyText = async (value) => {
+    const helper = document.createElement('textarea');
+    helper.value = value;
+    helper.setAttribute('readonly', 'true');
+    helper.style.position = 'absolute';
+    helper.style.left = '-9999px';
+    document.body.append(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+  };
+
+  const copyValue = async (button) => {
+    const value = button.dataset.copyValue;
+
+    if (!value) {
+      return;
+    }
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        await fallbackCopyText(value);
+      }
+
+      resetCopyButton(button);
+      button.textContent = 'Copied';
+      button.dataset.copyTimer = String(window.setTimeout(() => resetCopyButton(button), 1800));
+    } catch {
+      resetCopyButton(button);
+      button.textContent = 'Press to copy';
+      button.dataset.copyTimer = String(window.setTimeout(() => resetCopyButton(button), 2200));
+    }
+  };
 
   const closeModal = () => {
     if (!modal) {
@@ -143,6 +230,7 @@
     modal.classList.remove('flex');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    activeTrigger?.focus();
   };
 
   const openModal = () => {
@@ -150,10 +238,12 @@
       return;
     }
 
+    activeTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    modalPanel?.focus();
   };
 
   openButton?.addEventListener('click', openModal);
@@ -168,6 +258,15 @@
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
       closeModal();
+    }
+  });
+
+  copyButtons?.forEach((button) => {
+    if (button instanceof HTMLButtonElement) {
+      button.dataset.defaultLabel = button.textContent?.trim() ?? 'Copy';
+      button.addEventListener('click', () => {
+        void copyValue(button);
+      });
     }
   });
 </script>

@@ -53,7 +53,7 @@ const stackGroups = [
 
 <section id="projects" class="projects-section reveal-section">
   <div class="projects-shell">
-    <header class="projects-header">
+    <header class="projects-header reveal-item" style="--reveal-order: 0;">
       <div class="projects-heading-group">
         <h2 class="projects-title">Projects</h2>
       </div>
@@ -73,14 +73,14 @@ const stackGroups = [
 
       <div class="project-feature-layout">
         <div class="project-feature-details">
-          <p class="project-feature-description">
+          <p class="project-feature-description reveal-item" style="--reveal-order: 1;">
             Engineered a production-ready lab environment focused on
             <strong> High Availability </strong> and <strong> Security Hardening </strong>. This
             architecture serves as a scalable template for microservices-based business deployments.
           </p>
 
           <div class="project-pillars">
-            <article class="project-pillar glass-effect">
+            <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 2;">
               <h4 class="project-pillar-title">Security Perimeter</h4>
               <ul class="project-pillar-list">
                 {
@@ -96,7 +96,7 @@ const stackGroups = [
               </ul>
             </article>
 
-            <article class="project-pillar glass-effect">
+            <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 3;">
               <h4 class="project-pillar-title">Network Topology</h4>
               <ul class="project-pillar-list">
                 {
@@ -114,7 +114,7 @@ const stackGroups = [
           </div>
         </div>
 
-        <div class="project-network-panel glass-effect">
+        <div class="project-network-panel glass-effect reveal-item" style="--reveal-order: 4;">
           <div class="project-network-label">
             <div class="project-network-indicator" aria-hidden="true"></div>
             <span>Live Infrastructure Visualization</span>
@@ -406,18 +406,31 @@ const stackGroups = [
 
       <div class="project-stack-grid">
         {
-          stackGroups.map((group) => (
-            <section class="project-stack-group">
+          stackGroups.map((group, groupIndex) => (
+            <section class="project-stack-group reveal-item" style={`--reveal-order: ${groupIndex + 1};`}>
               <h5 class="project-stack-group-title">
                 <span class="project-stack-group-rule" aria-hidden="true"></span>
                 {group.label}
               </h5>
 
               <div class="project-tech-list">
-                {group.items.map(([name, description]) => (
+                {group.items.map(([name, description], itemIndex) => (
                   <article class="project-tech-item">
-                    <span class="project-tech-chip">{name}</span>
-                    <div class="project-tech-tooltip glass-effect">{description}</div>
+                    <button
+                      class="project-tech-chip"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls={`project-tech-${groupIndex}-${itemIndex}`}
+                    >
+                      {name}
+                    </button>
+                    <div
+                      id={`project-tech-${groupIndex}-${itemIndex}`}
+                      class="project-tech-tooltip glass-effect"
+                      role="tooltip"
+                    >
+                      {description}
+                    </div>
                   </article>
                 ))}
               </div>
@@ -428,3 +441,77 @@ const stackGroups = [
     </section>
   </div>
 </section>
+
+<script is:inline>
+  const techItems = Array.from(document.querySelectorAll('.project-tech-item'));
+
+  const closeTechItem = (item) => {
+    const button = item.querySelector('.project-tech-chip');
+
+    item.classList.remove('is-open');
+
+    if (button instanceof HTMLButtonElement) {
+      button.setAttribute('aria-expanded', 'false');
+    }
+  };
+
+  const openTechItem = (item) => {
+    techItems.forEach((currentItem) => {
+      if (currentItem !== item) {
+        closeTechItem(currentItem);
+      }
+    });
+
+    const button = item.querySelector('.project-tech-chip');
+    item.classList.add('is-open');
+
+    if (button instanceof HTMLButtonElement) {
+      button.setAttribute('aria-expanded', 'true');
+    }
+  };
+
+  techItems.forEach((item) => {
+    const button = item.querySelector('.project-tech-chip');
+
+    if (!(button instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    button.addEventListener('click', () => {
+      const isOpen = item.classList.contains('is-open');
+
+      if (isOpen) {
+        closeTechItem(item);
+        return;
+      }
+
+      openTechItem(item);
+    });
+
+    button.addEventListener('blur', () => {
+      window.setTimeout(() => {
+        if (!item.contains(document.activeElement)) {
+          closeTechItem(item);
+        }
+      }, 0);
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+
+    techItems.forEach((item) => {
+      if (!item.contains(event.target)) {
+        closeTechItem(item);
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      techItems.forEach((item) => closeTechItem(item));
+    }
+  });
+</script>

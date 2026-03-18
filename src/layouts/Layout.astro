@@ -34,6 +34,12 @@ import { siteConfig } from '../config/site';
 		<Navbar />
 		<slot />
 		<script is:inline>
+			const navbar = document.getElementById('navbar');
+			const progressBar = document.getElementById('site-progress-bar');
+			const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
+			const revealElements = document.querySelectorAll('.reveal-section');
+			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 			document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 				anchor.addEventListener('click', (event) => {
 					const href = anchor.getAttribute('href');
@@ -50,19 +56,76 @@ import { siteConfig } from '../config/site';
 
 					event.preventDefault();
 
-					const navbar = document.getElementById('navbar');
 					const offset = navbar ? navbar.offsetHeight + 24 : 88;
 					const top = target.getBoundingClientRect().top + window.scrollY - offset;
 
 					window.scrollTo({
 						top,
-						behavior: 'smooth',
+						behavior: reducedMotion ? 'auto' : 'smooth',
 					});
 				});
 			});
 
-			const revealElements = document.querySelectorAll('.reveal-section');
-			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			const updateProgress = () => {
+				if (!(progressBar instanceof HTMLElement)) {
+					return;
+				}
+
+				const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+				const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+				progressBar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
+			};
+
+			const updateNavbarState = () => {
+				if (!(navbar instanceof HTMLElement)) {
+					return;
+				}
+
+				navbar.classList.toggle('site-navbar-scrolled', window.scrollY > 18);
+			};
+
+			const setActiveLink = (sectionId) => {
+				navLinks.forEach((link) => {
+					const isActive = sectionId ? link.getAttribute('href') === `#${sectionId}` : false;
+					link.classList.toggle('navbar-link-active', isActive);
+
+					if (isActive) {
+						link.setAttribute('aria-current', 'true');
+					} else {
+						link.removeAttribute('aria-current');
+					}
+				});
+			};
+
+			const sectionTargets = navLinks
+				.map((link) => {
+					const href = link.getAttribute('href');
+
+					if (!href) {
+						return null;
+					}
+
+					const section = document.querySelector(href);
+
+					if (!(section instanceof HTMLElement)) {
+						return null;
+					}
+
+					return { link, section };
+				})
+				.filter(Boolean);
+
+			const syncActiveLinkFromScroll = () => {
+				if (sectionTargets.length === 0) {
+					return;
+				}
+
+				const firstSectionTop = sectionTargets[0].section.offsetTop - (navbar ? navbar.offsetHeight + 48 : 112);
+
+				if (window.scrollY < firstSectionTop) {
+					setActiveLink(null);
+				}
+			};
 
 			if (revealElements.length > 0) {
 				if (reducedMotion) {
@@ -102,6 +165,39 @@ import { siteConfig } from '../config/site';
 					});
 				}
 			}
+
+			if (sectionTargets.length > 0) {
+				const activeSectionObserver = new IntersectionObserver(
+					(entries) => {
+						const visibleEntries = entries
+							.filter((entry) => entry.isIntersecting)
+							.sort((entryA, entryB) => entryB.intersectionRatio - entryA.intersectionRatio);
+
+						if (visibleEntries.length === 0) {
+							return;
+						}
+
+						const [currentEntry] = visibleEntries;
+						setActiveLink(currentEntry.target.id);
+					},
+					{
+						rootMargin: '-38% 0px -48% 0px',
+						threshold: [0.2, 0.35, 0.5, 0.7],
+					}
+				);
+
+				sectionTargets.forEach(({ section }) => activeSectionObserver.observe(section));
+				syncActiveLinkFromScroll();
+			}
+
+			updateProgress();
+			updateNavbarState();
+			syncActiveLinkFromScroll();
+			window.addEventListener('scroll', updateProgress, { passive: true });
+			window.addEventListener('scroll', updateNavbarState, { passive: true });
+			window.addEventListener('scroll', syncActiveLinkFromScroll, { passive: true });
+			window.addEventListener('resize', updateProgress);
+			window.addEventListener('resize', syncActiveLinkFromScroll);
 		</script>
 	</body>
 </html>

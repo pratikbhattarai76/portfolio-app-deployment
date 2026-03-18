@@ -25,6 +25,109 @@ body {
   padding-bottom: 4rem;
 }
 
+.site-navbar {
+  height: 4.25rem;
+  transition:
+    background-color 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease;
+}
+
+.site-navbar-scrolled {
+  background: rgba(2, 6, 23, 0.9);
+  border-color: rgba(34, 211, 238, 0.12);
+  box-shadow: 0 18px 50px rgba(2, 6, 23, 0.32);
+}
+
+.site-progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.site-progress-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(34, 211, 238, 0.95), rgba(103, 232, 249, 0.35));
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
+}
+
+.navbar-shell {
+  height: 4.25rem;
+}
+
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.navbar-avatar {
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.navbar-brand:hover .navbar-avatar,
+.navbar-brand:focus-visible .navbar-avatar {
+  transform: scale(1.04);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.18);
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.45);
+  scrollbar-width: none;
+}
+
+.navbar-links::-webkit-scrollbar {
+  display: none;
+}
+
+.navbar-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 9999px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  transition:
+    color 0.22s ease,
+    background-color 0.22s ease,
+    transform 0.22s ease;
+}
+
+.navbar-link:hover,
+.navbar-link:focus-visible {
+  color: #67e8f9;
+  background: rgba(34, 211, 238, 0.08);
+  transform: translateY(-1px);
+}
+
+.navbar-link-active {
+  color: #020617;
+  background: linear-gradient(135deg, #22d3ee, #67e8f9);
+  box-shadow: 0 10px 28px rgba(34, 211, 238, 0.22);
+}
+
+.navbar-link-active:hover,
+.navbar-link-active:focus-visible {
+  color: #020617;
+  background: linear-gradient(135deg, #22d3ee, #67e8f9);
+}
+
 .site-grid-layer {
   position: fixed;
   inset: 0;
@@ -102,6 +205,15 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-glow-hover:focus-visible {
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-glow-hover:active {
+  transform: translateY(0);
+}
+
 .reveal-section {
   opacity: 0;
   transform: translateY(2rem) scale(0.985);
@@ -119,9 +231,26 @@ body {
   filter: blur(0);
 }
 
+.reveal-item {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--reveal-order, 0) * 90ms);
+  will-change: opacity, transform;
+}
+
+.reveal-section.reveal-visible .reveal-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .grid-bg,
-  .scanline {
+  .scanline,
+  .hero-image-wrap,
+  .hero-image-glow {
     animation: none;
   }
 
@@ -129,6 +258,22 @@ body {
     opacity: 1;
     transform: none;
     filter: none;
+    transition: none;
+  }
+
+  .reveal-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .site-navbar,
+  .site-progress-bar,
+  .navbar-avatar,
+  .navbar-link,
+  .project-tech-tooltip,
+  .deployment-card,
+  .contact-link-card {
     transition: none;
   }
 }
@@ -163,10 +308,12 @@ body {
 
 .hero-image-wrap {
   @apply relative mx-auto mb-8 h-40 w-40;
+  animation: hero-float 6.8s ease-in-out infinite;
 }
 
 .hero-image-glow {
   @apply absolute inset-0 rounded-full bg-cyber-accent/20 blur-3xl;
+  animation: hero-glow 7.4s ease-in-out infinite;
 }
 
 .hero-image {
@@ -191,6 +338,7 @@ body {
 
 .hero-button {
   @apply inline-flex items-center rounded-sm px-8 py-3 font-bold transition-all;
+  touch-action: manipulation;
 }
 
 .hero-button-primary {
@@ -215,6 +363,16 @@ body {
 
 .infrastructure-card {
   @apply overflow-hidden rounded-lg border border-cyber-border/40 shadow-2xl bg-slate-900/40;
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.infrastructure-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.2);
+  box-shadow: 0 22px 56px rgba(2, 6, 23, 0.3);
 }
 
 .infrastructure-header {
@@ -298,7 +456,7 @@ body {
 }
 
 .deployments-title {
-  @apply text-4xl font-bold tracking-tight;
+  @apply text-3xl font-bold tracking-tight sm:text-4xl;
 }
 
 .deployments-subtitle {
@@ -311,6 +469,7 @@ body {
 
 .deployment-card {
   @apply glass-effect relative flex h-full flex-col overflow-hidden rounded-lg p-8 transition-all;
+  touch-action: manipulation;
 }
 
 .deployment-card::before {
@@ -329,11 +488,24 @@ body {
   transform: translateY(-2px);
 }
 
+.deployment-card-interactive:focus-within {
+  background: rgba(30, 41, 59, 0.42);
+  transform: translateY(-2px);
+}
+
 .deployment-card-interactive:hover::before {
   height: 100%;
 }
 
+.deployment-card-interactive:focus-within::before {
+  height: 100%;
+}
+
 .deployment-card-interactive:hover .deployment-card-title {
+  color: #22d3ee;
+}
+
+.deployment-card-interactive:focus-within .deployment-card-title {
   color: #22d3ee;
 }
 
@@ -389,10 +561,14 @@ body {
 
 .connection-modal {
   @apply fixed inset-0 z-[100] items-center justify-center bg-cyber-bg/90 p-4 backdrop-blur-sm;
+  overscroll-behavior: contain;
 }
 
 .connection-modal-panel {
   @apply relative w-full max-w-md overflow-hidden rounded-lg border-2 border-cyber-accent/40 p-8;
+  max-height: min(90vh, 44rem);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .connection-modal-topbar {
@@ -411,6 +587,10 @@ body {
   @apply text-slate-500 transition-colors hover:text-cyber-accent;
 }
 
+.connection-modal-intro {
+  @apply mb-6 text-sm leading-relaxed text-slate-400;
+}
+
 .connection-modal-details {
   @apply space-y-6 font-mono;
 }
@@ -419,24 +599,44 @@ body {
   @apply space-y-2;
 }
 
+.connection-modal-field-meta {
+  @apply flex items-center justify-between gap-4;
+}
+
 .connection-modal-label {
   @apply block text-[10px] uppercase tracking-[0.2em] text-slate-500;
 }
 
 .connection-modal-value {
-  @apply border border-cyber-border bg-slate-900/60 p-3 text-white;
+  @apply block border border-cyber-border bg-slate-900/60 p-3 text-sm text-white;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .connection-modal-value-accent {
   @apply text-cyber-accent;
 }
 
+.connection-modal-copy {
+  @apply inline-flex shrink-0 items-center rounded-sm border border-cyber-accent/35 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-cyber-accent transition-colors hover:bg-cyber-accent/10;
+  touch-action: manipulation;
+}
+
+.connection-modal-note {
+  @apply mt-6 text-xs leading-relaxed text-slate-500;
+}
+
 .connection-modal-actions {
-  @apply mt-8 flex justify-end border-t border-cyber-border pt-6;
+  @apply mt-8 flex flex-col-reverse gap-3 border-t border-cyber-border pt-6 sm:flex-row sm:justify-end;
 }
 
 .connection-modal-button {
-  @apply rounded-sm bg-cyber-accent px-6 py-2 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-cyber-bg transition-all hover:brightness-110;
+  @apply inline-flex w-full items-center justify-center rounded-sm bg-cyber-accent px-6 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-cyber-bg transition-all hover:brightness-110 sm:w-auto;
+  touch-action: manipulation;
+}
+
+.connection-modal-button-secondary {
+  @apply border border-cyber-accent/35 bg-transparent text-cyber-accent hover:bg-cyber-accent/10;
 }
 
 .projects-section {
@@ -501,6 +701,15 @@ body {
 
 .project-pillar {
   @apply rounded-lg border-l-4 border-l-cyber-accent p-8 transition-colors hover:bg-slate-800/40;
+  transition:
+    background-color 0.24s ease,
+    transform 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.project-pillar:hover,
+.project-pillar:focus-within {
+  transform: translateY(-2px);
 }
 
 .project-pillar-title {
@@ -653,15 +862,25 @@ body {
 }
 
 .project-tech-chip {
-  @apply block cursor-pointer rounded border border-cyber-border bg-slate-800/30 px-4 py-2 font-mono text-[11px] text-slate-300 transition-all hover:border-cyber-accent hover:text-white;
+  @apply block w-full cursor-pointer rounded border border-cyber-border bg-slate-800/30 px-4 py-2 text-left font-mono text-[11px] text-slate-300 transition-all hover:border-cyber-accent hover:text-white;
+  touch-action: manipulation;
+}
+
+.project-tech-chip[aria-expanded='true'],
+.project-tech-chip:focus-visible {
+  border-color: rgba(34, 211, 238, 0.5);
+  color: #f8fafc;
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.16);
 }
 
 .project-tech-tooltip {
-  @apply pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 translate-y-2 rounded border border-cyber-accent/30 p-4 text-xs font-mono leading-relaxed text-slate-300 opacity-0 shadow-2xl transition-all;
+  @apply pointer-events-none invisible absolute left-0 top-full z-20 mt-2 w-64 translate-y-2 rounded border border-cyber-accent/30 p-4 text-xs font-mono leading-relaxed text-slate-300 opacity-0 shadow-2xl transition-all;
 }
 
-.project-tech-item:hover .project-tech-tooltip {
-  @apply pointer-events-auto translate-y-0 opacity-100;
+.project-tech-item:hover .project-tech-tooltip,
+.project-tech-item:focus-within .project-tech-tooltip,
+.project-tech-item.is-open .project-tech-tooltip {
+  @apply pointer-events-auto visible translate-y-0 opacity-100;
 }
 
 .contact-section {
@@ -694,6 +913,16 @@ body {
 
 .contact-link-card {
   @apply rounded-lg p-5 transition-colors hover:border-cyber-accent/40 hover:bg-slate-800/40;
+  touch-action: manipulation;
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.22s ease;
+}
+
+.contact-link-card:hover,
+.contact-link-card:focus-visible {
+  transform: translateY(-2px);
 }
 
 .contact-link-label {
@@ -771,6 +1000,142 @@ body {
   transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
 }
 
+@media (max-width: 639px) {
+  .site-main {
+    padding-top: 5.75rem;
+  }
+
+  .site-navbar {
+    height: auto;
+  }
+
+  .navbar-shell {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .navbar-brand {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .navbar-link {
+    flex: 0 0 auto;
+    font-size: 0.62rem;
+  }
+
+  .deployments-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .deployment-card {
+    padding: 1.25rem;
+  }
+
+  .deployment-card-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .deployment-card-title {
+    font-size: 1.35rem;
+  }
+
+  .deployment-card-text {
+    margin-bottom: 1.5rem;
+  }
+
+  .deployment-card-button {
+    letter-spacing: 0.14em;
+  }
+
+  .connection-modal {
+    align-items: flex-end;
+    padding: 0.75rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .connection-modal-panel {
+    border-radius: 1rem;
+    padding: 1.25rem;
+  }
+
+  .connection-modal-header {
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+
+  .connection-modal-title {
+    font-size: 0.95rem;
+    letter-spacing: 0.14em;
+  }
+
+  .connection-modal-field-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact-title {
+    font-size: 2.6rem;
+  }
+
+  .contact-description {
+    font-size: 1rem;
+  }
+
+  .contact-panel {
+    padding: 1.25rem;
+  }
+
+  .contact-panel-badge {
+    position: static;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+  }
+
+  .contact-panel-title {
+    margin-bottom: 1.25rem;
+    font-size: 1.75rem;
+  }
+
+  .project-tech-tooltip {
+    position: static;
+    width: 100%;
+    margin-top: 0.75rem;
+    transform: none;
+    max-height: 0;
+    overflow: hidden;
+    border-color: transparent;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 1;
+    box-shadow: none;
+  }
+
+  .project-tech-item:hover .project-tech-tooltip,
+  .project-tech-item:focus-within .project-tech-tooltip,
+  .project-tech-item.is-open .project-tech-tooltip {
+    max-height: 10rem;
+    border-color: rgba(34, 211, 238, 0.2);
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .contact-toast {
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    width: auto;
+  }
+}
+
 .contact-toast-visible {
   opacity: 1;
   pointer-events: auto;
@@ -823,6 +1188,30 @@ body {
 
 .site-footer-link {
   @apply text-slate-400 transition-colors hover:text-cyber-accent;
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes hero-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
 }
 
 @keyframes pulse-cyan {

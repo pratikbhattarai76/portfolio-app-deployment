@@ -23,24 +23,22 @@ const normalizeText = (value: unknown, maxLength: number) => {
 
 const requiredEnv = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'] as const;
 
-const env = {
-  SMTP_HOST: import.meta.env.SMTP_HOST,
-  SMTP_PORT: import.meta.env.SMTP_PORT,
-  SMTP_USER: import.meta.env.SMTP_USER,
-  SMTP_PASS: import.meta.env.SMTP_PASS,
-  SMTP_SECURE: import.meta.env.SMTP_SECURE,
-  SMTP_FROM_EMAIL: import.meta.env.SMTP_FROM_EMAIL,
-  SMTP_FROM_NAME: import.meta.env.SMTP_FROM_NAME,
-  CONTACT_TO_EMAIL: import.meta.env.CONTACT_TO_EMAIL,
-};
+const getEnv = () => ({
+  SMTP_HOST: process.env.SMTP_HOST ?? import.meta.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT ?? import.meta.env.SMTP_PORT,
+  SMTP_USER: process.env.SMTP_USER ?? import.meta.env.SMTP_USER,
+  SMTP_PASS: process.env.SMTP_PASS ?? import.meta.env.SMTP_PASS,
+  SMTP_SECURE: process.env.SMTP_SECURE ?? import.meta.env.SMTP_SECURE,
+  SMTP_FROM_EMAIL: process.env.SMTP_FROM_EMAIL ?? import.meta.env.SMTP_FROM_EMAIL,
+  SMTP_FROM_NAME: process.env.SMTP_FROM_NAME ?? import.meta.env.SMTP_FROM_NAME,
+  CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL,
+});
 
-const missingEnv = () => requiredEnv.filter((key) => !env[key]);
+const missingEnv = (env: ReturnType<typeof getEnv>) => requiredEnv.filter((key) => !env[key]);
 
-const createTransport = () => {
+const createTransport = (env: ReturnType<typeof getEnv>) => {
   const port = Number(env.SMTP_PORT ?? '465');
-  const secure = env.SMTP_SECURE
-    ? env.SMTP_SECURE === 'true'
-    : port === 465;
+  const secure = env.SMTP_SECURE ? env.SMTP_SECURE === 'true' : port === 465;
 
   return nodemailer.createTransport({
     host: env.SMTP_HOST,
@@ -68,6 +66,7 @@ const formatSentAt = (value: Date) =>
   }).format(value);
 
 export const POST: APIRoute = async ({ request }) => {
+  const env = getEnv();
   const contentType = request.headers.get('content-type') ?? '';
 
   if (!contentType.includes('application/json')) {
@@ -108,7 +107,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  if (missingEnv().length > 0) {
+  if (missingEnv(env).length > 0) {
     return json(500, {
       ok: false,
       message: 'Contact service is not configured yet.',
@@ -154,7 +153,7 @@ export const POST: APIRoute = async ({ request }) => {
   `;
 
   try {
-    const transporter = createTransport();
+    const transporter = createTransport(env);
 
     await transporter.sendMail({
       from,
@@ -164,7 +163,9 @@ export const POST: APIRoute = async ({ request }) => {
       text: textBody,
       html: htmlBody,
     });
-  } catch {
+  } catch (error) {
+    console.error('Contact API mail delivery failed:', error);
+
     return json(500, {
       ok: false,
       message: 'Unable to deliver your message right now.',

@@ -48,27 +48,18 @@ npm run start
 
 ## Build Docker image
 
-The contact form configuration is compiled during the Astro build, so pass the SMTP values as build arguments when creating the image:
+Build the image from the included `Dockerfile`:
 
 ```bash
-docker build \
-  --build-arg SMTP_HOST=smtp.gmail.com \
-  --build-arg SMTP_PORT=465 \
-  --build-arg SMTP_USER=your-email@example.com \
-  --build-arg SMTP_PASS=your-app-password \
-  --build-arg SMTP_SECURE=true \
-  --build-arg SMTP_FROM_EMAIL=your-email@example.com \
-  --build-arg SMTP_FROM_NAME="Portfolio" \
-  --build-arg CONTACT_TO_EMAIL=your-email@example.com \
-  -t portfolio-app .
+docker build -t portfolio-app .
 ```
 
 ## Run with Docker
 
-Run the container:
+Run the container and pass the same environment file:
 
 ```bash
-docker run --rm -p 4321:4321 portfolio-app
+docker run --rm -p 4321:4321 --env-file .env portfolio-app
 ```
 
 The app will be available at `http://localhost:4321`.

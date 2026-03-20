@@ -16,6 +16,26 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={siteConfig.description} />
 		<meta name="theme-color" content="#020617" />
+		<script is:inline>
+			(() => {
+				const themeStorageKey = 'portfolio-theme';
+				const root = document.documentElement;
+				let theme = 'dark';
+
+				try {
+					const storedTheme = window.localStorage.getItem(themeStorageKey);
+
+					if (storedTheme === 'light' || storedTheme === 'dark') {
+						theme = storedTheme;
+					} else if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+						theme = 'light';
+					}
+				} catch {}
+
+				root.dataset.theme = theme;
+				root.style.colorScheme = theme;
+			})();
+		</script>
 		<meta name="robots" content="index,follow" />
 		<link rel="canonical" href={canonicalUrl} />
 		<meta property="og:type" content="website" />
@@ -83,6 +103,103 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 		<Navbar />
 		<slot />
 		<script is:inline>
+			const themeStorageKey = 'portfolio-theme';
+			const darkThemeColor = '#020617';
+			const lightThemeColor = '#f8fafc';
+			const root = document.documentElement;
+			const themeMeta = document.querySelector('meta[name="theme-color"]');
+			const themeToggleButtons = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+			const themeToggleCopies = Array.from(document.querySelectorAll('[data-theme-toggle-copy]'));
+			const reducedMotion =
+				window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+			const systemThemeQuery = window.matchMedia?.('(prefers-color-scheme: light)');
+			let themeAnimationTimer = 0;
+
+			const persistTheme = (theme) => {
+				try {
+					window.localStorage.setItem(themeStorageKey, theme);
+				} catch {}
+			};
+
+			const getStoredTheme = () => {
+				try {
+					const storedTheme = window.localStorage.getItem(themeStorageKey);
+					return storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : null;
+				} catch {
+					return null;
+				}
+			};
+
+			const getSystemTheme = () => (systemThemeQuery?.matches ? 'light' : 'dark');
+
+			const updateThemeUi = (theme) => {
+				root.dataset.theme = theme;
+				root.style.colorScheme = theme;
+
+				if (themeMeta instanceof HTMLMetaElement) {
+					themeMeta.setAttribute('content', theme === 'light' ? lightThemeColor : darkThemeColor);
+				}
+
+				themeToggleButtons.forEach((button) => {
+					const nextTheme = theme === 'dark' ? 'light' : 'dark';
+					button.dataset.theme = theme;
+					button.setAttribute('aria-pressed', String(theme === 'light'));
+					button.setAttribute('aria-label', `Activate ${nextTheme} mode`);
+					button.setAttribute('title', `Switch to ${nextTheme} mode`);
+				});
+
+				themeToggleCopies.forEach((copy) => {
+					copy.textContent = theme === 'dark' ? 'Dark' : 'Light';
+				});
+			};
+
+			const applyTheme = (theme, { animate = false, persist = false } = {}) => {
+				if (animate && !reducedMotion) {
+					root.classList.add('theme-switching');
+					window.clearTimeout(themeAnimationTimer);
+					themeAnimationTimer = window.setTimeout(() => {
+						root.classList.remove('theme-switching');
+					}, 480);
+				}
+
+				updateThemeUi(theme);
+
+				if (persist) {
+					persistTheme(theme);
+				}
+			};
+
+			const switchTheme = (nextTheme) => {
+				if (
+					!reducedMotion &&
+					typeof document.startViewTransition === 'function'
+				) {
+					document.startViewTransition(() => {
+						applyTheme(nextTheme, { animate: true, persist: true });
+					});
+					return;
+				}
+
+				applyTheme(nextTheme, { animate: true, persist: true });
+			};
+
+			updateThemeUi(getStoredTheme() ?? getSystemTheme());
+
+			themeToggleButtons.forEach((button) => {
+				button.addEventListener('click', () => {
+					const currentTheme = root.dataset.theme === 'light' ? 'light' : 'dark';
+					switchTheme(currentTheme === 'dark' ? 'light' : 'dark');
+				});
+			});
+
+			systemThemeQuery?.addEventListener?.('change', ({ matches }) => {
+				if (getStoredTheme()) {
+					return;
+				}
+
+				applyTheme(matches ? 'light' : 'dark');
+			});
+
 			const shouldResetScrollOnLoad = document.documentElement.dataset.scrollReset === 'reload';
 			const resetPageScroll = () => {
 				window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -116,8 +233,6 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 			const progressBar = document.getElementById('site-progress-bar');
 			const navLinks = Array.from(document.querySelectorAll('[data-nav-link]'));
 			const revealElements = Array.from(document.querySelectorAll('.reveal-section'));
-			const reducedMotion =
-				window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 			const supportsIntersectionObserver = typeof window.IntersectionObserver === 'function';
 			const getNavbarOffset = () => (navbar instanceof HTMLElement ? navbar.offsetHeight + 24 : 88);
 			const getRevealStart = () => {

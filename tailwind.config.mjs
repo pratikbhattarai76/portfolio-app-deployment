@@ -1,3 +1,5 @@
+const withOpacity = (variableName) => `rgb(var(${variableName}) / <alpha-value>)`;
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}'],
@@ -5,11 +7,11 @@ export default {
     extend: {
       colors: {
         cyber: {
-          bg: '#020617',
-          card: 'rgba(15, 23, 42, 0.8)',
-          accent: '#22d3ee',
-          border: 'rgba(34, 211, 238, 0.2)',
-          grid: 'rgba(34, 211, 238, 0.05)',
+          bg: withOpacity('--color-ink-rgb'),
+          card: withOpacity('--color-surface-strong-rgb'),
+          accent: withOpacity('--color-accent-rgb'),
+          border: withOpacity('--color-border-rgb'),
+          grid: withOpacity('--color-grid-rgb'),
         },
       },
       fontFamily: {
@@ -20,4 +22,3 @@ export default {
   },
   plugins: [],
 };
-

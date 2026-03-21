@@ -2,6 +2,8 @@
 
 A containerized, Server-Side Rendered (SSR) portfolio application that serves as the public entry point to my self-hosted private cloud infrastructure.
 
+Implements a pull-based CI/CD pipeline using GitHub Actions, GHCR, Docker, and Bash automation on a self-hosted server.
+
 This repository focuses on **application packaging and delivery**, including Dockerization, CI/CD, and integration with a self-hosted deployment environment.
 
 🔗 Live Deployment: [Portfolio](https://web.pratik-labs.xyz)  
@@ -34,8 +36,10 @@ This project implements a **pull-based CI/CD workflow**:
 1. Code is pushed to GitHub  
 2. GitHub Actions builds the Docker image  
 3. Image is published to GitHub Container Registry (GHCR)  
-4. A scheduled Bash script on the self-hosted server checks for updated images  
+4. A scheduled Bash script running on the server periodically checks for updated images  
 5. The script pulls the latest image and conditionally redeploys the service using Docker Compose  
+
+Images are tagged using both `latest` and commit-based tags for traceability and version control.
 
 ---
 
@@ -46,6 +50,9 @@ Uses a 3-stage Dockerfile to separate dependencies, build process, and runtime e
 
 ### Server-Side Rendering (SSR)
 The application runs on Node.js using SSR, enabling dynamic routes and backend API functionality (e.g., contact form).
+
+### Health Monitoring
+Includes a container-level healthcheck endpoint (`/api/health`) to ensure application availability.
 
 ### Runtime Secret Injection
 Sensitive values (SMTP credentials) are injected at runtime via environment variables instead of being stored in the image.
@@ -62,7 +69,7 @@ The app is packaged as a portable container and deployed into a reverse-proxied,
 
 ## 🔁 Automated Deployment Script
 
-A Bash script is used to implement pull-based deployment on the self-hosted server.
+A Bash script implements pull-based deployment on the self-hosted server.
 
 - Runs on a schedule using cron  
 - Checks for updated container images  
@@ -101,3 +108,9 @@ npm install
 cp .env.example .env
 npm run dev
 ```
+---
+
+## 📌 Notes
+- Infrastructure and deployment environment are managed seperately
+- This repository focuses on application build and delivery
+- Designed as part of a self-hosted DevOps workflow

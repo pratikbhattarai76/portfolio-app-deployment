@@ -1,111 +1,116 @@
-# 🚀 My Personal DevOps Portfolio & Cloud Portal
+# 🚀 Portfolio Application – Deployment Pipeline
 
-A high-performance, Server-Side Rendered (SSR) portfolio application that serves as the public entry point to my self-hosted private cloud environment.
+A containerized, Server-Side Rendered (SSR) portfolio application that serves as the public entry point to my self-hosted private cloud infrastructure.
 
-This repository contains the portfolio application source code, contact form API logic, and the Docker build configuration used to package the app for deployment.
+Implements a pull-based CI/CD pipeline using GitHub Actions, GHCR, Docker, and Bash automation on a self-hosted server.
 
-**🔗 Live Deployment:** [Portfolio](https://web.pratik-labs.xyz)
-**⚙️ Infrastructure Repository:** Deployment and production infrastructure are managed separately in my private cloud infrastructure repository.
+This repository focuses on **application packaging and delivery**, including Dockerization, CI/CD, and integration with a self-hosted deployment environment.
+
+🔗 Live Deployment: [Portfolio](https://web.pratik-labs.xyz)  
+⚙️ Infrastructure: [Private Cloud Infrastructure](https://github.com/pratikbhattarai76/private-cloud-infrastructure)
 
 ---
 
-## 🏗️ Application Role in the Architecture
+## 🏗️ Role in the Architecture
 
-This repository is responsible for the **application layer** of the portfolio platform:
+This repository is responsible for the **application layer** of the platform:
 
-- Astro-based SSR portfolio application
-- Contact form API endpoint
-- Docker image build process
-- GitHub-based source control and CI image workflow
+- SSR portfolio application built with Astro and Node.js  
+- Contact form API endpoint  
+- Docker image build and packaging  
+- GitHub Actions-based CI pipeline  
 
-The **production deployment layer** is managed outside this repository as part of my broader private cloud infrastructure, including: [Private Cloud Architecture]()https://github.com/pratikbhattarai76/private-cloud-infrastructure.git
+Deployment and infrastructure orchestration are handled separately in the infrastructure repository, including:
 
-- Docker Compose orchestration
-- Reverse proxy routing
-- Cloudflare Tunnel integration
-- Shared Docker networking
+- Docker Compose orchestration  
+- Reverse proxy routing (Nginx Proxy Manager)  
+- Cloudflare Tunnel integration  
+- Internal container networking  
+
+---
+
+## ⚙️ CI/CD & Deployment Flow
+
+This project implements a **pull-based CI/CD workflow**:
+
+1. Code is pushed to GitHub  
+2. GitHub Actions builds the Docker image  
+3. Image is published to GitHub Container Registry (GHCR)  
+4. A scheduled Bash script running on the server periodically checks for updated images  
+5. The script pulls the latest image and conditionally redeploys the service using Docker Compose  
+
+Images are tagged using both `latest` and commit-based tags for traceability and version control.
 
 ---
 
 ## 🏗️ DevOps & Architectural Highlights
 
 ### Multi-Stage Docker Build
-The application uses a 3-stage Dockerfile to improve efficiency, portability, and security. Dependencies are installed in a dedicated stage, the Astro application is built in a separate builder stage, and only the production artifacts are copied into the final runtime image.
+Uses a 3-stage Dockerfile to separate dependencies, build process, and runtime environment, resulting in smaller and more secure images.
 
-### Server-Side Rendering with Node.js
-The project uses the Astro Node adapter to run as an SSR application instead of a static export. This allows the portfolio to serve dynamic functionality such as backend API routes for the contact form while still keeping the frontend lightweight.
+### Server-Side Rendering (SSR)
+The application runs on Node.js using SSR, enabling dynamic routes and backend API functionality (e.g., contact form).
+
+### Health Monitoring
+Includes a container-level healthcheck endpoint (`/api/health`) to ensure application availability.
 
 ### Runtime Secret Injection
-Sensitive runtime values such as SMTP credentials are not embedded into the image. They are injected during deployment through environment variables managed outside the repository.
+Sensitive values (SMTP credentials) are injected at runtime via environment variables instead of being stored in the image.
 
 ### Infrastructure Separation
-Application code and infrastructure code are intentionally separated. This repository focuses on application development and image creation, while deployment orchestration is managed through the private cloud infrastructure repository.
+Application code and infrastructure are decoupled:
+- This repo → application + image build  
+- Infrastructure repo → deployment + networking  
 
 ### Cloud-Native Deployment Style
-The application is built as a portable container image and integrated into a broader reverse-proxied, tunnel-based homelab deployment model, reflecting real-world DevOps and platform engineering practices.
+The app is packaged as a portable container and deployed into a reverse-proxied, tunnel-based private cloud environment.
+
+---
+
+## 🔁 Automated Deployment Script
+
+A Bash script implements pull-based deployment on the self-hosted server.
+
+- Runs on a schedule using cron  
+- Checks for updated container images  
+- Pulls the latest image from GHCR  
+- Compares image versions  
+- Recreates the service only when a new image is detected  
+- Logs execution output for monitoring and debugging  
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Application Layer
-- **Framework:** Astro
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Rendering Mode:** Server-Side Rendering (SSR)
-- **API Layer:** Astro API Routes
-- **Email Service:** Nodemailer with SMTP
+### Application
+- Astro  
+- TypeScript  
+- Tailwind CSS  
+- Server-Side Rendering (Node.js)  
+- Astro API Routes  
+- Nodemailer (SMTP)
 
 ### Delivery & Operations
-- **Containerization:** Docker
-- **Image Registry:** GitHub Container Registry (GHCR)
-- **Reverse Proxy:** Nginx / Nginx Proxy Manager *(managed externally)*
-- **Edge Access:** Cloudflare DNS + Cloudflare Tunnel *(managed externally)*
-- **Deployment Orchestration:** Docker Compose *(managed externally in infrastructure repository)*
+- Docker  
+- Docker Compose  
+- GitHub Actions  
+- GitHub Container Registry (GHCR)  
+- Bash (automation script)  
 
 ---
 
 ## ⚙️ Local Development Setup
 
-To run this project locally for development or testing:
-
 ```bash
-# 1. Clone the repository
 git clone https://github.com/pratikbhattarai76/portfolio-app.git
 cd portfolio-app
-
-# 2. Install dependencies
 npm install
-
-# 3. Configure environment variables
 cp .env.example .env
-
-# 4. Start the development server
 npm run dev
-
 ```
-
-## 🔐 Environment Variables
-
-This project uses environment variables for runtime configuration, primarily for the SMTP-powered contact form.
-
-Create a local `.env` file from `.env.example` and provide the required values before running the app.
-
-### Example `.env.example`
-
-```env
-SMTP_HOST=smtp.example.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=mailer@example.com
-SMTP_PASS=replace-with-your-smtp-password
-SMTP_FROM_EMAIL=mailer@example.com
-SMTP_FROM_NAME=Portfolio Contact Form
-CONTACT_TO_EMAIL=owner@example.com
-```
+---
 
 ## 📌 Notes
-
-- This repository does **not** contain the full production infrastructure stack. [Private Cloud Architecture]()https://github.com/pratikbhattarai76/private-cloud-infrastructure.git
-- Production deployment is orchestrated from the private cloud infrastructure repository.
-- Reverse proxy, public routing, and tunnel configuration are managed outside this application repository.
+- Infrastructure and deployment environment are managed seperately
+- This repository focuses on application build and delivery
+- Designed as part of a self-hosted DevOps workflow

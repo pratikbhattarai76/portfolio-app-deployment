@@ -1465,14 +1465,7 @@ html {
 
   .grid-bg,
   .hero-image-wrap,
-  .hero-image-glow,
-  .project-network-indicator,
-  .project-network-flow,
-  .project-network-boundary,
-  .project-network-zone,
-  .project-network-node-edge,
-  .project-network-node-core,
-  .project-network-node-app {
+  .hero-image-glow {
     animation: none;
   }
 
@@ -1492,10 +1485,6 @@ html {
 
   .project-network-panel {
     min-height: 28rem;
-  }
-
-  .project-network-packet {
-    display: none;
   }
 }
 

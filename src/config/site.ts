@@ -12,7 +12,7 @@ export const siteConfig = {
     'https://github.com/pratikbhattarai76/aws-file-upload-malaideu',
   malaiDeuLiveUrl: 'https://malaideu.pratik-labs.xyz',
   portfolioAppProjectUrl:
-    'https://github.com/pratikbhattarai76/portfolio-app-deployment-pipeline',
+    'https://github.com/pratikbhattarai76/portfolio-application-deployment',
   portfolioAppLiveUrl: 'https://web.pratik-labs.xyz',
   linkedinUrl: 'https://www.linkedin.com/in/pratik-bhattarai-01896a255/',
   cvUrl: '#',

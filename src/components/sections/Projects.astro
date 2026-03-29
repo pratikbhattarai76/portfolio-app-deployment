@@ -43,10 +43,10 @@ const privateCloudStackGroups = [
 ];
 
 const malaiDeuCloudDeliveryItems = [
-  'AWS EC2 application hosting',
-  'Amazon S3 file storage',
-  'IAM role-based access',
-  'Cloudflare domain and HTTPS',
+  'AWS EC2 for application hosting',
+  'Amazon S3 for file storage',
+  'IAM role-based access control',
+  'Cloudflare domain and HTTPS integration',
 ];
 
 const malaiDeuDeploymentFlowItems = [
@@ -62,16 +62,24 @@ const malaiDeuStackGroups = [
     items: ['Node.js', 'Express.js', 'EJS'],
   },
   {
-    label: 'File & Cloud',
+    label: 'Cloud & Storage',
     items: ['Multer', 'AWS SDK v3', 'Amazon S3', 'IAM Role', 'EC2'],
   },
   {
-    label: 'Delivery',
+    label: 'Deployment & CI/CD',
     items: ['Docker', 'GitHub Actions', 'GHCR'],
   },
   {
     label: 'Network & Access',
     items: ['Cloudflare', 'Custom Domain', 'HTTPS'],
+  },
+  {
+    label: 'Infrastructure as Code',
+    items: ['Terraform'],
+  },
+  {
+    label: 'Configuration & Automation',
+    items: ['Ansible'],
   },
 ];
 

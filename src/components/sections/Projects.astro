@@ -43,17 +43,17 @@ const privateCloudStackGroups = [
 ];
 
 const malaiDeuCloudDeliveryItems = [
-  'AWS EC2 for application hosting',
+  'AWS EC2 for containerized application hosting',
   'Amazon S3 for file storage',
   'IAM role-based access control',
-  'Cloudflare domain and HTTPS integration',
+  'Application Load Balancer (ALB) with Cloudflare for domain and HTTPS routing',
 ];
 
 const malaiDeuDeploymentFlowItems = [
   'Dockerized application runtime',
-  'GitHub Actions CI pipeline',
-  'GHCR image publishing',
-  'SSH-based deployment to EC2',
+  'GitHub Actions CI/CD pipeline',
+  'GHCR image build and publishing',
+  'Automated SSH-based deployment to EC2',
 ];
 
 const malaiDeuStackGroups = [
@@ -62,8 +62,8 @@ const malaiDeuStackGroups = [
     items: ['Node.js', 'Express.js', 'EJS'],
   },
   {
-    label: 'Cloud & Storage',
-    items: ['Multer', 'AWS SDK v3', 'Amazon S3', 'IAM Role', 'EC2'],
+    label: 'Cloud & Infrastructure',
+    items: ['Application Load Balancer (ALB)', 'Amazon S3', 'IAM Role', 'EC2', 'AWS SDK'],
   },
   {
     label: 'Deployment & CI/CD',
@@ -71,7 +71,7 @@ const malaiDeuStackGroups = [
   },
   {
     label: 'Network & Access',
-    items: ['Cloudflare', 'Custom Domain', 'HTTPS'],
+    items: ['Cloudflare'],
   },
   {
     label: 'Infrastructure as Code',
@@ -125,11 +125,11 @@ const portfolioStackGroups = [
       </div>
     </header>
 
-    <section id="private-cloud" class="project-feature reveal-section">
+    <section id="private-cloud" class="project-feature reveal-section border-t border-cyber-border/20" style="order: 3;">
       <div class="project-feature-heading">
         <div class="project-feature-heading-row">
           <h3 class="project-feature-title reveal-item" style="--reveal-order: 0;">
-            Private Cloud Architecture
+            Private Cloud Infrastructure
           </h3>
           <a
             class="project-feature-link btn-glow-hover reveal-item"
@@ -202,7 +202,7 @@ const portfolioStackGroups = [
         <div class="project-network-panel glass-effect reveal-item" style="--reveal-order: 6;">
           <div class="project-network-label">
             <div class="project-network-indicator" aria-hidden="true"></div>
-            <span>Live Infrastructure Visualization</span>
+            <span>System Architecture</span>
           </div>
 
           <svg class="project-network-visual" viewBox="0 0 600 550" preserveAspectRatio="xMidYMid meet">
@@ -504,7 +504,7 @@ const portfolioStackGroups = [
       </div>
     </section>
 
-    <section id="tech-stack" class="project-stack reveal-section">
+    <section id="tech-stack" class="project-stack reveal-section" style="order: 4;">
       <h4 class="project-stack-title reveal-item" style="--reveal-order: 0;">Infrastructure Stack</h4>
 
       <div class="project-stack-grid">
@@ -530,7 +530,7 @@ const portfolioStackGroups = [
       </div>
     </section>
 
-    <section id="malaideu" class="project-feature reveal-section border-t border-cyber-border/20">
+    <section id="malaideu" class="project-feature reveal-section" style="order: 1;">
       <div class="project-feature-heading">
         <div class="project-feature-heading-row">
           <h3 class="project-feature-title reveal-item" style="--reveal-order: 0;">
@@ -579,14 +579,15 @@ const portfolioStackGroups = [
         <div class="project-feature-details">
           <p class="project-feature-description reveal-item" style="--reveal-order: 4;">
             Deployed a cloud-based file upload system on AWS using Docker, EC2, S3, and IAM, with
-            CI/CD automation through GitHub Actions and GHCR. The project focuses on secure file
-            delivery, containerized deployment, image-based updates, and domain/HTTPS integration
-            through Cloudflare.
+            CI/CD automation through GitHub Actions and GHCR. Traffic is routed via Application
+            Load Balancer (ALB). The project focuses on secure file delivery, containerized
+            deployment, image-based updates, and domain/HTTPS integration through Cloudflare and
+            ALB.
           </p>
 
           <div class="project-pillars">
             <article class="project-pillar glass-effect reveal-item" style="--reveal-order: 5;">
-              <h4 class="project-pillar-title">Cloud Delivery</h4>
+              <h4 class="project-pillar-title">Cloud Architecture</h4>
               <ul class="project-pillar-list">
                 {
                   malaiDeuCloudDeliveryItems.map((item) => (
@@ -622,10 +623,10 @@ const portfolioStackGroups = [
         <div class="project-network-panel glass-effect reveal-item" style="--reveal-order: 7;">
           <div class="project-network-label">
             <div class="project-network-indicator" aria-hidden="true"></div>
-            <span>AWS File Upload Flow</span>
+            <span>System Architecture</span>
           </div>
 
-          <svg class="project-network-visual" viewBox="0 0 600 550" preserveAspectRatio="xMidYMid meet">
+          <svg class="project-network-visual" viewBox="0 0 600 660" preserveAspectRatio="xMidYMid meet">
             <defs>
               <filter id="malaideu-packet-glow" x="-200%" y="-200%" width="400%" height="400%">
                 <feGaussianBlur stdDeviation="2" result="blur"></feGaussianBlur>
@@ -674,20 +675,36 @@ const portfolioStackGroups = [
               </text>
             </g>
 
-            <path id="malaideu-flow-ec2" class="project-network-line project-network-flow" d="M300,105 L300,185" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
+            <path id="malaideu-flow-alb" class="project-network-line project-network-flow" d="M300,105 L300,137" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
 
             <rect
               class="project-network-boundary"
-              x="145"
-              y="145"
-              width="310"
-              height="335"
+              x="130"
+              y="125"
+              width="340"
+              height="440"
               rx="12"
               fill="var(--diagram-boundary-fill)"
               stroke="var(--diagram-boundary-stroke)"
               stroke-width="1"
             ></rect>
-            <g transform="translate(300, 200)">
+
+            <g transform="translate(300, 155)">
+              <rect class="project-network-node project-network-node-edge" fill="var(--diagram-node-fill)" height="38" rx="4" stroke="var(--diagram-accent)" stroke-width="1" width="196" x="-98" y="-19"></rect>
+              <text
+                fill="var(--diagram-accent)"
+                font-family="Inter"
+                font-size="7.5"
+                text-anchor="middle"
+              >
+                <tspan x="0" y="-3.5">Application Load</tspan>
+                <tspan x="0" y="8.5">Balancer (ALB)</tspan>
+              </text>
+            </g>
+
+            <path id="malaideu-flow-ec2" class="project-network-line project-network-flow" d="M300,174 L300,218" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
+
+            <g transform="translate(300, 235)">
               <rect class="project-network-node project-network-node-core" fill="var(--diagram-node-fill)" height="30" rx="4" stroke="var(--diagram-accent)" stroke-width="1" width="140" x="-70" y="-15"></rect>
               <text
                 fill="var(--diagram-accent)"
@@ -700,9 +717,9 @@ const portfolioStackGroups = [
               </text>
             </g>
 
-            <path id="malaideu-flow-container" class="project-network-line project-network-flow" d="M300,215 L300,265" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
+            <path id="malaideu-flow-container" class="project-network-line project-network-flow" d="M300,250 L300,298" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
 
-            <g transform="translate(300, 280)">
+            <g transform="translate(300, 315)">
               <rect class="project-network-node project-network-node-core" fill="var(--diagram-node-fill)" height="30" rx="4" stroke="var(--diagram-accent)" stroke-width="1" width="180" x="-90" y="-15"></rect>
               <text
                 fill="var(--diagram-accent)"
@@ -715,9 +732,24 @@ const portfolioStackGroups = [
               </text>
             </g>
 
-            <path id="malaideu-flow-sdk" class="project-network-line project-network-flow" d="M300,295 L300,346" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
+            <path id="malaideu-flow-app" class="project-network-line project-network-flow" d="M300,330 L300,378" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
 
-            <g transform="translate(300, 360)">
+            <g transform="translate(300, 395)">
+              <rect class="project-network-node project-network-node-core" fill="var(--diagram-node-fill)" height="30" rx="4" stroke="var(--diagram-accent)" stroke-width="1" width="126" x="-63" y="-15"></rect>
+              <text
+                fill="var(--diagram-accent)"
+                font-family="Inter"
+                font-size="8.5"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                MalaiDeu
+              </text>
+            </g>
+
+            <path id="malaideu-flow-sdk" class="project-network-line project-network-flow" d="M300,410 L300,458" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
+
+            <g transform="translate(300, 475)">
               <rect class="project-network-node project-network-node-core" fill="var(--diagram-node-fill)" height="28" rx="4" stroke="var(--diagram-accent)" stroke-width="1" width="120" x="-60" y="-14"></rect>
               <text
                 fill="var(--diagram-accent)"
@@ -730,9 +762,9 @@ const portfolioStackGroups = [
               </text>
             </g>
 
-            <path id="malaideu-flow-s3" class="project-network-line project-network-flow" d="M300,374 L300,417" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
+            <path id="malaideu-flow-s3" class="project-network-line project-network-flow" d="M300,489 L300,526" fill="none" stroke="var(--diagram-accent)" stroke-width="1"></path>
 
-            <g transform="translate(300, 432)">
+            <g transform="translate(300, 547)">
               <rect class="project-network-node project-network-node-core" fill="var(--diagram-node-fill)" height="30" rx="4" stroke="var(--diagram-accent)" stroke-width="1" width="110" x="-55" y="-15"></rect>
               <text
                 fill="var(--diagram-accent)"
@@ -751,22 +783,32 @@ const portfolioStackGroups = [
               </animateMotion>
             </circle>
             <circle class="project-network-packet" r="3" fill="var(--diagram-packet)" filter="url(#malaideu-packet-glow)">
-              <animateMotion dur="5.1s" repeatCount="indefinite" rotate="auto" begin="0.35s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+              <animateMotion dur="4.7s" repeatCount="indefinite" rotate="auto" begin="0.25s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#malaideu-flow-alb"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="3" fill="var(--diagram-packet)" filter="url(#malaideu-packet-glow)">
+              <animateMotion dur="5.1s" repeatCount="indefinite" rotate="auto" begin="0.45s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
                 <mpath href="#malaideu-flow-ec2"></mpath>
               </animateMotion>
             </circle>
             <circle class="project-network-packet" r="2.5" fill="var(--diagram-packet)" filter="url(#malaideu-packet-glow)">
-              <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto" begin="0.6s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+              <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto" begin="0.75s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
                 <mpath href="#malaideu-flow-container"></mpath>
               </animateMotion>
             </circle>
             <circle class="project-network-packet" r="2.5" fill="var(--diagram-packet)" filter="url(#malaideu-packet-glow)">
-              <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto" begin="0.95s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+              <animateMotion dur="4.3s" repeatCount="indefinite" rotate="auto" begin="1.05s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+                <mpath href="#malaideu-flow-app"></mpath>
+              </animateMotion>
+            </circle>
+            <circle class="project-network-packet" r="2.5" fill="var(--diagram-packet)" filter="url(#malaideu-packet-glow)">
+              <animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto" begin="1.3s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
                 <mpath href="#malaideu-flow-sdk"></mpath>
               </animateMotion>
             </circle>
             <circle class="project-network-packet" r="2.5" fill="var(--diagram-packet)" filter="url(#malaideu-packet-glow)">
-              <animateMotion dur="4.9s" repeatCount="indefinite" rotate="auto" begin="1.2s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
+              <animateMotion dur="4.9s" repeatCount="indefinite" rotate="auto" begin="1.55s" calcMode="linear" keyPoints="0;1;0" keyTimes="0;0.5;1">
                 <mpath href="#malaideu-flow-s3"></mpath>
               </animateMotion>
             </circle>
@@ -775,7 +817,7 @@ const portfolioStackGroups = [
       </div>
     </section>
 
-    <section id="malaideu-stack" class="project-stack reveal-section">
+    <section id="malaideu-stack" class="project-stack reveal-section" style="order: 2;">
       <h4 class="project-stack-title reveal-item" style="--reveal-order: 0;">Stack &amp; Dependencies</h4>
 
       <div class="project-stack-grid">
@@ -801,7 +843,7 @@ const portfolioStackGroups = [
       </div>
     </section>
 
-    <section id="portfolio-application" class="project-feature reveal-section border-t border-cyber-border/20">
+    <section id="portfolio-application" class="project-feature reveal-section border-t border-cyber-border/20" style="order: 5;">
       <div class="project-feature-heading">
         <div class="project-feature-heading-row">
           <h3 class="project-feature-title reveal-item" style="--reveal-order: 0;">
@@ -1065,7 +1107,7 @@ const portfolioStackGroups = [
       </div>
     </section>
 
-    <section id="portfolio-application-stack" class="project-stack reveal-section">
+    <section id="portfolio-application-stack" class="project-stack reveal-section" style="order: 6;">
       <h4 class="project-stack-title reveal-item" style="--reveal-order: 0;">Stack &amp; Dependencies</h4>
 
       <div class="project-stack-grid">

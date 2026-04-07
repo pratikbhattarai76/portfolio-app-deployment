@@ -19,16 +19,15 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 		<script is:inline>
 			(() => {
 				const themeStorageKey = 'portfolio-theme';
+				const defaultTheme = 'dark';
 				const root = document.documentElement;
-				let theme = 'dark';
+				let theme = defaultTheme;
 
 				try {
 					const storedTheme = window.localStorage.getItem(themeStorageKey);
 
 					if (storedTheme === 'light' || storedTheme === 'dark') {
 						theme = storedTheme;
-					} else if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
-						theme = 'light';
 					}
 				} catch {}
 
@@ -104,6 +103,7 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 		<slot />
 		<script is:inline>
 			const themeStorageKey = 'portfolio-theme';
+			const defaultTheme = 'dark';
 			const darkThemeColor = '#020617';
 			const lightThemeColor = '#f8fafc';
 			const root = document.documentElement;
@@ -112,7 +112,6 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 			const themeToggleCopies = Array.from(document.querySelectorAll('[data-theme-toggle-copy]'));
 			const reducedMotion =
 				window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-			const systemThemeQuery = window.matchMedia?.('(prefers-color-scheme: light)');
 			let themeAnimationTimer = 0;
 
 			const persistTheme = (theme) => {
@@ -129,8 +128,6 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 					return null;
 				}
 			};
-
-			const getSystemTheme = () => (systemThemeQuery?.matches ? 'light' : 'dark');
 
 			const updateThemeUi = (theme) => {
 				root.dataset.theme = theme;
@@ -183,21 +180,13 @@ const pageTitle = `${siteConfig.name} | ${siteConfig.title}`;
 				applyTheme(nextTheme, { animate: true, persist: true });
 			};
 
-			updateThemeUi(getStoredTheme() ?? getSystemTheme());
+			updateThemeUi(getStoredTheme() ?? defaultTheme);
 
 			themeToggleButtons.forEach((button) => {
 				button.addEventListener('click', () => {
 					const currentTheme = root.dataset.theme === 'light' ? 'light' : 'dark';
 					switchTheme(currentTheme === 'dark' ? 'light' : 'dark');
 				});
-			});
-
-			systemThemeQuery?.addEventListener?.('change', ({ matches }) => {
-				if (getStoredTheme()) {
-					return;
-				}
-
-				applyTheme(matches ? 'light' : 'dark');
 			});
 
 			const shouldResetScrollOnLoad = document.documentElement.dataset.scrollReset === 'reload';

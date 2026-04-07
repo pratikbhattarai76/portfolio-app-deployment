@@ -1,22 +1,52 @@
 ---
-const toolingRows = [
-  ['Docker', 'Docker Compose', 'Linux', 'Git', 'GitHub Actions', 'CI/CD'],
-  ['Ansible', 'Terraform', 'AWS (EC2, S3, IAM)', 'Cloudflare', 'Prometheus', 'Grafana'],
-  ['Nginx Proxy Manager'],
+const toolingGroups = [
+  {
+    title: 'Cloud & Infrastructure',
+    items: ['AWS (EC2, S3, IAM, ALB)', 'Cloudflare'],
+  },
+  {
+    title: 'Containerization',
+    items: ['Docker', 'Docker Compose'],
+  },
+  {
+    title: 'Infrastructure as Code',
+    items: ['Terraform', 'Ansible'],
+  },
+  {
+    title: 'CI/CD & Automation',
+    items: ['GitHub Actions', 'GHCR'],
+  },
+  {
+    title: 'Monitoring',
+    items: ['Prometheus', 'Grafana', 'Node Exporter', 'cAdvisor'],
+  },
+  {
+    title: 'Systems & Networking',
+    items: ['Linux', 'Nginx Proxy Manager (Nginx)'],
+  },
+  {
+    title: 'Version Control',
+    items: ['Git', 'GitHub'],
+  },
 ];
 ---
 
 <section class="tooling-section">
   <div class="tooling-shell reveal-section">
     <h2 class="tooling-title reveal-item" style="--reveal-order: 0;">Top Skills</h2>
-    {
-      toolingRows.map((row, rowIndex) => (
-        <ul class="tooling-row reveal-item" style={`--reveal-order: ${rowIndex + 1};`}>
-          {row.map((item) => (
-            <li class="tooling-pill">{item}</li>
-          ))}
-        </ul>
-      ))
-    }
+    <div class="tooling-groups">
+      {
+        toolingGroups.map((group, groupIndex) => (
+          <article class="tooling-group reveal-item" style={`--reveal-order: ${groupIndex + 1};`}>
+            <h3 class="tooling-group-title">{group.title}</h3>
+            <ul class="tooling-group-items">
+              {group.items.map((item) => (
+                <li class="tooling-pill">{item}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
   </div>
 </section>

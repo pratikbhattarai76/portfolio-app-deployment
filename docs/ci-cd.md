@@ -1,6 +1,6 @@
 # CI/CD Pipeline
 
-The pipeline is defined in `.github/workflows/docker.yml` and has two jobs: `verify` and `build-and-push`.
+The pipeline is defined in `.github/workflows/docker.yml` and has three jobs: `verify`, `build-and-push`, and `update-deployment`.
 
 ## verify
 Runs on every pull request and every push to main. Steps:
@@ -26,11 +26,20 @@ Only runs on pushes to main, and only after `verify` has passed. Steps:
 
 The image is published as `ghcr.io/pratikbhattarai76/portfolio-app`.
 
+## update-deployment
+Only runs on pushes to main, after `build-and-push` has passed. Steps:
+
+1. Checkout the [k8s-homelab-platform](https://github.com/pratikbhattarai76/k8s-homelab-platform) repo using a PAT stored as `PORTFOLIO_K8S_SERVER_DEPLOYMENT`.
+2. Use `sed` to replace the image tag in `manifests/apps/portfolio/deployment.yml` with `commit-<short-sha>`.
+3. Commit and push the change.
+
+Argo CD watches the homelab repo and auto-syncs when it detects the manifest change — pulling the new image and restarting the pod.
+
 ## Concurrency Control
 The workflow uses a concurrency group keyed on the branch with `cancel-in-progress: true`. If multiple commits land on main in quick succession, only the latest one finishes building — older builds are cancelled mid-run. This prevents race conditions where an older build could overwrite a newer one in the registry.
 
 ## Permissions
-Each job has its own scoped permissions block. `verify` only gets `contents: read`. `build-and-push` gets `contents: read` and `packages: write`. Each job receives the minimum it needs and nothing more, which limits the blast radius if a malicious dependency in `npm ci` were ever to try to abuse `GITHUB_TOKEN`.
+Each job has its own scoped permissions block. `verify` only gets `contents: read`. `build-and-push` gets `contents: read` and `packages: write`. `update-deployment` uses a PAT for cross-repo access. Each job receives the minimum it needs and nothing more.
 
-## Server-Side Deployment
-The server-side half of the pipeline lives in the [infrastructure repository](https://github.com/pratikbhattarai76/private-cloud-infrastructure). A bash script on the server runs every 30 minutes via cron, pulls the `latest` tag from GHCR, compares image IDs, and recreates the container if a new image is detected. See that repository's [ci-cd.md](https://github.com/pratikbhattarai76/private-cloud-infrastructure/blob/main/docs/guides/ci-cd.md) for the deployment side.
+## Previous Deployment Model
+Before migrating to Kubernetes, the deployment side was pull-based: a bash script on the server ran every 30 minutes via cron, pulled the `latest` tag from GHCR, compared image IDs, and recreated the container if a new image was detected. That approach is documented in the [private-cloud-infrastructure](https://github.com/pratikbhattarai76/private-cloud-infrastructure) repository.

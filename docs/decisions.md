@@ -12,11 +12,13 @@ The app has a contact form that sends email through Nodemailer. That requires a 
 ## Why GHCR Over Docker Hub
 GHCR is integrated with the same GitHub account that holds the source code, uses the same authentication via the ephemeral `GITHUB_TOKEN`, and the published package automatically links back to the repository thanks to the OCI source label in the Dockerfile. No separate account, no separate credentials, no rate limits to worry about for a personal project.
 
-## Why Pull-Based Deployment
-The server pulls new images on a schedule rather than CI pushing to the server. This means CI never needs SSH access, deploy keys, or any inbound credentials for the server. A compromised CI pipeline can publish a bad image to GHCR but cannot execute commands on the server. The full reasoning lives in the [infrastructure repository's decisions doc](https://github.com/pratikbhattarai76/private-cloud-infrastructure/blob/main/docs/guides/decisions.md#why-pull-based-deployment).
+## Why GitOps Deployment
+The CI pipeline updates the image tag in the Kubernetes manifest and pushes to the infrastructure repo. Argo CD detects the change and deploys. This gives a full audit trail (every deployment is a Git commit), easy rollbacks (revert the commit), and separation of concerns (CI builds and publishes, GitOps deploys).
+
+Previously, the deployment was pull-based: a cron script on the server checked GHCR for new images every 30 minutes. That approach avoided giving CI any server access, but introduced up to 30 minutes of deployment delay and required maintaining a bash script. The GitOps approach deploys within minutes and is managed declaratively through Argo CD.
 
 ## Why `:latest` Plus Commit-SHA Tags
-Every published image gets two tags: `latest` (the update channel that the server's cron script watches) and `commit-<short-sha>` (an immutable reference to the exact build). The server uses `latest` for the rolling update flow, but every historical build is still addressable by its SHA tag if a rollback is ever needed.
+Every published image gets two tags: `latest` (for compatibility and quick manual pulls) and `commit-<short-sha>` (the immutable reference used in Kubernetes manifests). The Kubernetes deployment always pins to the exact commit SHA tag, so every deployment is traceable to a specific commit.
 
 ## Why a Non-Root Container User
 The Dockerfile ends with `USER node`, switching from the default root user to the unprivileged `node` user that the official Node images ship with. If a vulnerability in the app or a dependency were ever exploited, the attacker would land as a non-root user with no ability to write outside the working directory.
@@ -26,3 +28,6 @@ The Dockerfile includes a `HEALTHCHECK` instruction that uses Node's built-in `h
 
 ## Why a Smoke Test in CI
 The CI workflow runs a smoke test that boots the actual built server, polls `/api/health` until it responds, hits the home page to verify expected markup is present, and then shuts the server down. This catches a class of bugs that type checking and unit tests would miss — broken builds, runtime errors on startup, missing assets — before any image is published.
+
+## Why Separate Application and Infrastructure Repos
+The application code (this repo) and the Kubernetes manifests ([k8s-homelab-platform](https://github.com/pratikbhattarai76/k8s-homelab-platform)) live in separate repositories. This mirrors real-world practice where platform teams own infrastructure config and application teams own application code. It also means CI in the app repo only needs to build and publish — it doesn't need kubectl access or cluster credentials.
